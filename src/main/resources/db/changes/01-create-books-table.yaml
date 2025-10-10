@@ -48,8 +48,8 @@ databaseChangeLog:
                   type: varchar(500)
 
               - column:
-                  name: isDeleted
-                  type: boolean
+                  name: is_deleted
+                  type: bit(1)
                   defaultValueBoolean: false
                   constraints:
                     nullable: false

@@ -6,8 +6,11 @@ import com.example.springbootbookstore.exception.EntityNotFoundException;
 import com.example.springbootbookstore.mapper.BookMapper;
 import com.example.springbootbookstore.model.Book;
 import com.example.springbootbookstore.repository.BookRepository;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.Session;
 import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
@@ -15,6 +18,9 @@ import org.springframework.stereotype.Service;
 public class BookServiceImpl implements BookService {
     private final BookRepository bookRepository;
     private final BookMapper bookMapper;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Override
     public BookDto save(CreateBookRequestDto requestDto) {
@@ -24,7 +30,7 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public List<BookDto> findAll() {
-        return bookMapper.toBookDto(bookRepository.findAll());
+        return bookMapper.toBookDto(bookRepository.findAllByIsDeletedFalse());
     }
 
     @Override
@@ -42,17 +48,13 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public BookDto update(Long id, CreateBookRequestDto requestDto) {
+        Session session = entityManager.unwrap(Session.class);
+        session.enableFilter("deletedBookFilter").setParameter("isDeleted", false);
         Book existingBook = bookRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Book not found with id " + id));
-
-        existingBook.setTitle(requestDto.getTitle());
-        existingBook.setAuthor(requestDto.getAuthor());
-        existingBook.setIsbn(requestDto.getIsbn());
-        existingBook.setPrice(requestDto.getPrice());
-        existingBook.setDescription(requestDto.getDescription());
-        existingBook.setCoverImage(requestDto.getCoverImage());
-
-        return bookMapper.toDto(bookRepository.save(existingBook));
+        bookMapper.updateBookFromDto(requestDto, existingBook);
+        Book updatedBook = bookRepository.save(existingBook);
+        return bookMapper.toDto(updatedBook);
     }
 
 }

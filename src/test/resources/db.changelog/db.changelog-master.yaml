@@ -1,2 +1,0 @@
-- include:
-    file: db/changelog/01-create-books-table.yaml
