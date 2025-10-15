@@ -6,6 +6,7 @@ import com.example.springbootbookstore.dto.CreateBookRequestDto;
 import com.example.springbootbookstore.model.Book;
 import java.util.List;
 import org.mapstruct.Mapper;
+import org.mapstruct.MappingTarget;
 
 @Mapper(config = MapperConfig.class)
 public interface BookMapper {
@@ -14,4 +15,6 @@ public interface BookMapper {
     Book toModel(CreateBookRequestDto requestDto);
 
     List<BookDto> toBookDto(List<Book> books);
+
+    void updateBookFromDto(CreateBookRequestDto dto, @MappingTarget Book book);
 }
