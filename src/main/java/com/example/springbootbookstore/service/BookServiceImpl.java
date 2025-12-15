@@ -1,11 +1,13 @@
 package com.example.springbootbookstore.service;
 
 import com.example.springbootbookstore.dto.BookDto;
+import com.example.springbootbookstore.dto.BookSearchParametersDto;
 import com.example.springbootbookstore.dto.CreateBookRequestDto;
 import com.example.springbootbookstore.exception.EntityNotFoundException;
 import com.example.springbootbookstore.mapper.BookMapper;
 import com.example.springbootbookstore.model.Book;
 import com.example.springbootbookstore.repository.BookRepository;
+import com.example.springbootbookstore.repository.specification.BookSpecification;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -49,5 +51,12 @@ public class BookServiceImpl implements BookService {
         return bookMapper.toDto(book);
     }
 
+    @Override
+    public List<BookDto> searchBooks(BookSearchParametersDto searchParameters) {
+        return bookRepository.findAll(BookSpecification.build(searchParameters))
+                .stream()
+                .map(bookMapper::toDto)
+                .toList();
+    }
 }
 

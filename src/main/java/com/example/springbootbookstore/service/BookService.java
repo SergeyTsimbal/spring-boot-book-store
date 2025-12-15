@@ -1,6 +1,7 @@
 package com.example.springbootbookstore.service;
 
 import com.example.springbootbookstore.dto.BookDto;
+import com.example.springbootbookstore.dto.BookSearchParametersDto;
 import com.example.springbootbookstore.dto.CreateBookRequestDto;
 import java.util.List;
 
@@ -14,4 +15,6 @@ public interface BookService {
     void deleteById(Long id);
 
     BookDto update(Long id, CreateBookRequestDto requestDto);
+
+    List<BookDto> searchBooks(BookSearchParametersDto searchParameters);
 }
